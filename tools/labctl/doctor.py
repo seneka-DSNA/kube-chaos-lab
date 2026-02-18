@@ -62,17 +62,26 @@ def _check_docker_daemon() -> CheckResult:
     proc = _run(["docker", "info"])
     if proc.returncode == 0:
         return CheckResult(name="docker daemon", status=Status.OK, message="reachable")
-    msg = _first_line(proc.stderr) or _first_line(proc.stdout) or "not reachable (is Docker running?)"
+    msg = (
+        _first_line(proc.stderr) 
+        or _first_line(proc.stdout) 
+        or "not reachable (is Docker running?)"
+    )
     return CheckResult(name="docker daemon", status=Status.ERR, message=msg)
 
 
 def _check_kubectl_kustomize() -> CheckResult:
     if not _which("kubectl"):
-        return CheckResult(name="kubectl kustomize", status=Status.ERR, message="kubectl not installed")
+        return CheckResult(name="kubectl kustomize", 
+                           status=Status.ERR, 
+                           message="kubectl not installed"
+                           )
 
     proc = _run(["kubectl", "kustomize", "--help"])
     if proc.returncode == 0:
-        return CheckResult(name="kubectl kustomize", status=Status.OK, message="available")
+        return CheckResult(name="kubectl kustomize", 
+                           status=Status.OK,
+                           message="available")
 
     if _which("kustomize"):
         ver = _cmd_version("kustomize", ["version"])

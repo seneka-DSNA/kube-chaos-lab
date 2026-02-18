@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typer
 
-from tools.labctl.doctor import exit_code, run_doctor, Status
+from tools.labctl.doctor import run_doctor
 
 app = typer.Typer(no_args_is_help=True)
 
