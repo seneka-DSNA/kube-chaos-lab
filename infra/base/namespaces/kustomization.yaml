@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ns-platform.yaml
+  - ns-legacy.yaml
+  - ns-dev-stg.yaml
+  - ns-dev-prd.yaml
+  - ns-adm-stg.yaml
+  - ns-adm-prd.yaml
+  - ns-ops-stg.yaml
+  - ns-ops-prd.yaml
+  - ns-devops-stg.yaml
+  - ns-devops-prd.yaml
