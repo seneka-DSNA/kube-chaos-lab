@@ -1,7 +1,12 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: kube-chaos-lab
+
 nodes:
   - role: control-plane
+    extraPortMappings:
+      - containerPort: 30220
+        hostPort: 8080
+        protocol: TCP
   - role: worker
   - role: worker

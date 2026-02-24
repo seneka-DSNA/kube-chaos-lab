@@ -5,8 +5,4 @@ resources:
   - namespaces
   - platform
   - apps
-patches:
-  - target:
-      kind: Deployment
-      name: ingress-nginx-controller
-    path: patch-remove-ingress-ready.yaml
+  

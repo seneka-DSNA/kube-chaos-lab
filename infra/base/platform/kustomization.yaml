@@ -1,13 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: platform
-
 resources: 
   - https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/kind/deploy.yaml
-
+  - rbac-controller.yaml
 patches:
   - target:
       kind: Deployment
       name: ingress-nginx-controller
     path: patch-remove-ingress-ready.yaml
+  - target:
+      kind: Service
+      name: ingress-nginx-controller
+    path: patch-node-port.yaml
+
+    
