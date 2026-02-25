@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import json
-import time
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
 
 import yaml
 
 from .config import LabConfig, kind_cluster_config_path, repo_root
 from .kube import CommandError, run_command, run_or_raise
-from .wait import WaitSpec, Waiter
+from .wait import Waiter, WaitSpec
 
 
 class StartError(Exception):
@@ -161,9 +159,25 @@ class StartService:
 
         return done, f"Nodes Ready: {ready}/{expected}"
 
-    def _check_deployment_available(self, namespace: str, deployment: str, component_name: str) -> tuple[bool, str]:
+    def _check_deployment_available(
+            self,
+            namespace: str,
+            deployment: str,
+            component_name: str
+            ) -> tuple[bool, str]:
         try:
-            result = run_or_raise(["kubectl", "-n", namespace, "get", "deployment", deployment, "-o", "json"])
+            result = run_or_raise(
+                [
+                    "kubectl",
+                    "-n",
+                    namespace,
+                    "get",
+                    "deployment",
+                    deployment,
+                    "-o",
+                    "json"
+                ]
+            )
             dep = json.loads(result.stdout)
         except Exception:
             return False, f"{component_name}: deployment not found yet"
@@ -180,7 +194,19 @@ class StartService:
         namespace = "ingress-nginx"
         label_selector = "app.kubernetes.io/component=controller"
 
-        result = run_command(["kubectl", "-n", namespace, "get", "pods", "-l", label_selector, "-o", "json"])
+        result = run_command(
+            [
+                "kubectl",
+                "-n",
+                namespace,                       
+                "get",
+                "pods",
+                "-l",
+                label_selector,
+                "-o",
+                "json"
+            ]
+        )
         if result.returncode != 0:
             return False, "Ingress pods not found yet"
 
@@ -194,7 +220,10 @@ class StartService:
 
         for pod in pods:
             conditions = pod.get("status", {}).get("conditions", [])
-            is_ready = any(c.get("type") == "Ready" and c.get("status") == "True" for c in conditions)
+            is_ready = any(
+                c.get("type") == "Ready" and c.get("status") == "True" 
+                for c in conditions
+            )
             if is_ready:
                 ready_count += 1
 
@@ -218,8 +247,25 @@ class StartService:
         return False, f"Ingress HTTP: {status}"
 
 
-    def _fail_fast_pods(self, namespace: str, label_selector: str, component_name: str) -> str | None:
-        pods = run_command(["kubectl", "-n", namespace, "get", "pods", "-l", label_selector, "-o", "json"])
+    def _fail_fast_pods(
+            self,
+            namespace: str,
+            label_selector: str,
+            component_name: str
+        ) -> str | None:
+        pods = run_command(
+            [
+                "kubectl",
+                "-n",
+                namespace,
+                "get",
+                "pods",
+                "-l",
+                label_selector,
+                "-o",
+                "json"
+            ]
+        )
         if pods.returncode != 0:
             return None
 
@@ -236,7 +282,14 @@ class StartService:
                 reason = waiting.get("reason")
                 message = waiting.get("message", "")
 
-                if reason in ("ImagePullBackOff", "ErrImagePull", "CrashLoopBackOff"):
-                    return f"{component_name} pod failure: {pod_name} reason={reason} {message}".strip()
+                if reason in (
+                    "ImagePullBackOff",
+                    "ErrImagePull", 
+                    "CrashLoopBackOff"
+                ):
+                    return(
+                        f"{component_name} pod failure: {pod_name}"
+                        f"reason={reason} {message}"
+                    ).strip()
 
         return None

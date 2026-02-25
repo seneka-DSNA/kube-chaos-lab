@@ -4,7 +4,7 @@ import typer
 
 from tools.labctl.config import lab_config
 from tools.labctl.doctor import run_doctor
-from tools.labctl.start import StartService, StartError
+from tools.labctl.start import StartError, StartService
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -17,7 +17,7 @@ def doctor() -> None:
 @app.command()
 def start() -> None:
     cfg = lab_config()
-    start_cfg = StartService(lab_config())
+    start_cfg = StartService(cfg)
     try:
 
         start_cfg.execute() 
