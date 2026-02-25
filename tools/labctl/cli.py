@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import typer
 
-from tools.labctl.config import kind_cluster_config_path, lab_config
+from tools.labctl.config import lab_config
 from tools.labctl.doctor import run_doctor
-from tools.labctl.start import StartConfig, StartError, start_cluster
+from tools.labctl.start import StartService, StartError
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -17,12 +17,10 @@ def doctor() -> None:
 @app.command()
 def start() -> None:
     cfg = lab_config()
-    start_cfg = StartConfig(
-                     cluster_name=cfg.cluster_name,
-                     kind_config_path=kind_cluster_config_path()
-                     )
+    start_cfg = StartService(lab_config())
     try:
-        start_cluster(start_cfg)
+
+        start_cfg.execute() 
     except StartError as e:
         print(f"ERROR: {e}")
         raise typer.Exit(code=1)
