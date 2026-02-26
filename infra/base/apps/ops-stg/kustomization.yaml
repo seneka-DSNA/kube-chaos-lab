@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources: 
-  - adm-stg
-  - dev-stg
-  - ops-stg
+namespace: ops-stg
+
+resources:
+  - toolbox

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: toolbox
+  namespace: ops-stg
+  labels:
+    app: toolbox
+spec:
+  restartPolicy: Always
+  containers:
+    - name: toolbox
+      image: nicolaka/netshoot:v0.13
+      command: ["sh", "-lc", "sleep infinity"]
